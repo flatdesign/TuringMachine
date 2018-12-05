@@ -24,10 +24,16 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    command.cpp \
+    state.cpp \
+    turingmachine.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    command.h \
+    state.h \
+    turingmachine.h
 
 FORMS += \
         mainwindow.ui
