@@ -1,26 +1,25 @@
 #include "turingmachine.h"
 #include "QDebug"
 
-int TuringMachine::getCountTapes() {
-    return this->countTapes;
-}
-
 int TuringMachine::getState() {
     return this->state;
-}
-
-int TuringMachine::getPosition() {
-    return this->position;
 }
 
 TuringMachine::TuringMachine(int countTapes) {
     this->state = 1;
     this->countTapes = countTapes;
     this->ready = false;
+    for(int i = 0; i < countTapes; i++) {
+        this->positions.push_back(0);
+    }
 }
 
 bool TuringMachine::isReady() {
     return this->ready;
+}
+
+void TuringMachine::setNotReady() {
+  this->ready = false;
 }
 
 bool TuringMachine::checkTable(QTableWidget *table) {
@@ -39,11 +38,18 @@ bool TuringMachine::checkTable(QTableWidget *table) {
     return true;
 }
 
+void TuringMachine::reset() {
+    for(int i; i < this->countTapes; i++) {
+        this->positions[i] = 0;
+    }
+    this->state = 1;
+}
+
 void TuringMachine::addCommand(int numberState, QTableWidget *table, int row){
-    QString read = table->item(row, 0)->text();
-    QString write = table->item(row, 1)->text();
-    QString direction = table->item(row, 2)->text();
-    QString nextState = table->item(row, 3)->text();
+    QString read = table->item(row, 1)->text();
+    QString write = table->item(row, 2)->text();
+    QString direction = table->item(row, 3)->text();
+    QString nextState = table->item(row, 4)->text();
     this->states[numberState]->addCommand(read, write, direction, nextState);
 }
 
@@ -62,7 +68,7 @@ bool TuringMachine::saveCommands(QTableWidget *table){
 QVector<QString> TuringMachine::step(QVector<QString> lines) {
     QString value;
     for(int i = 0; i < lines.size(); i++) {
-        value += lines[i][this->position];
+        value += lines[i][this->positions[i]];
     }
 
     Command *command = this->states[this->state]->getCommand(value);
@@ -71,7 +77,34 @@ QVector<QString> TuringMachine::step(QVector<QString> lines) {
     this->state = command->getNextState().toInt();
 
     for(int i = 0; i < lines.size(); i++) {
-        lines[i][this->position] = value[i];
+        lines[i][this->positions[i]] = value[i];
+    }
+
+    return this->changePosition(lines, command);
+}
+
+QVector<QString> TuringMachine::changePosition(QVector<QString> lines, Command *command) {
+    QString key = command->getDirection();
+    for(int i = 0; i < lines.size(); i++) {
+        switch(key[i].unicode()) {
+            case 60: {
+                if(this->positions[i] == 0) {
+                   lines[i].insert(0, '_');
+                } else {
+                    this->positions[i]--;
+                }
+                break;
+            }
+            case 62: {
+                if(++this->positions[i] == lines[i].length())
+                   lines[i].push_back('_');
+                break;
+            }
+            default: {
+                break;
+            }
+
+        }
     }
     return lines;
 }

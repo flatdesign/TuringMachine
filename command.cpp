@@ -16,7 +16,7 @@ QString Command::getRead() {
 }
 
 QString Command::getNextState() {
-    return this->getNextState();
+    return this->nextState;
 }
 
 QString Command::getDirection() {

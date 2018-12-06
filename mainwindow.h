@@ -16,18 +16,25 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_addState_1_clicked();
 
-    void on_addState_clicked();
+    void on_deleteState_1_clicked();
 
-    void on_deleteState_clicked();
+    void on_save_1_clicked();
 
-    void on_save_clicked();
+    void on_step_1_clicked();
 
-    void on_test_clicked();
+    void on_start_1_clicked();
 
-    void on_step_clicked();
+    void on_addState_2_clicked();
 
-    void on_start_clicked();
+    void on_deleteState_2_clicked();
+
+    void on_save_2_clicked();
+
+    void on_step_2_clicked();
+
+    void on_start_2_clicked();
 
 private:
     Ui::MainWindow *ui;

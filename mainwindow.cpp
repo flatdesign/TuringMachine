@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QMessageBox"
-
+#include "QThread"
 
 #include "turingmachine.h"
 #include "QDebug"
+
 TuringMachine tur1(1);
+TuringMachine tur2(3);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,48 +20,101 @@ MainWindow::~MainWindow(){
 }
 
 
-void MainWindow::on_addState_clicked() {
-    ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+void MainWindow::on_addState_2_clicked() {
+    ui->tableWidget_2->insertRow(ui->tableWidget_2->rowCount());
+    tur2.setNotReady();
 }
 
-void MainWindow::on_deleteState_clicked() {
-    if(ui->tableWidget->rowCount() > 1) {
-        ui->tableWidget->removeRow(ui->tableWidget->rowCount() - 1);
+void MainWindow::on_deleteState_2_clicked() {
+    if(ui->tableWidget_2->rowCount() > 1) {
+        ui->tableWidget_2->removeRow(ui->tableWidget_2->rowCount() - 1);
+        tur2.setNotReady();
     }
 }
 
-void MainWindow::on_save_clicked() {
-    if(tur1.checkTable(ui->tableWidget)) {
-      tur1.saveCommands(ui->tableWidget);
+void MainWindow::on_save_2_clicked() {
+    if(tur2.checkTable(ui->tableWidget_2)) {
+      tur2.saveCommands(ui->tableWidget_2);
     } else {
         QMessageBox::warning(0, "Предупреждение", "Заполните все ячейки!");
     }
 
 }
 
-void MainWindow::on_step_clicked() {
-    if(tur1.isReady()) {
-        QVector <QString> lines = {ui->edit1->toPlainText(), ui->edit2->toPlainText(), ui->edit3->toPlainText()};
-        lines = tur1.step(lines);
-        ui->edit1->clear();
-        ui->edit2->clear();
-        ui->edit3->clear();
-        ui->edit1->setText(lines[0]);
-        ui->edit2->setText(lines[1]);
-        ui->edit3->setText(lines[2]);
+void MainWindow::on_step_2_clicked() {
+    if(tur2.isReady()) {
+        if(tur2.getState() != 0) {
+            QVector <QString> lines = {ui->edit_2->toPlainText(), ui->edit_3->toPlainText(), ui->edit_4->toPlainText()};
+            lines = tur2.step(lines);
+            ui->edit_2->clear();
+            ui->edit_3->clear();
+            ui->edit_4->clear();
+            ui->edit_2->setText(lines[0]);
+            ui->edit_3->setText(lines[1]);
+            ui->edit_4->setText(lines[2]);
+        } else {
+            QMessageBox::information(0, "Успех", "МТ закночила выполнять ваш алгоритм");
+            tur2.reset();
+        }
+
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
 
 }
 
-void MainWindow::on_start_clicked() {
-    if(tur1.isReady()) {
+void MainWindow::on_start_2_clicked() {
+    if(tur2.isReady()) {
 
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
 }
 
-void MainWindow::on_test_clicked() {
+
+void MainWindow::on_addState_1_clicked() {
+    ui->tableWidget_1->insertRow(ui->tableWidget_1->rowCount());
+    tur1.setNotReady();
+}
+
+void MainWindow::on_deleteState_1_clicked() {
+    if(ui->tableWidget_1->rowCount() > 1) {
+        ui->tableWidget_1->removeRow(ui->tableWidget_1->rowCount() - 1);
+        tur1.setNotReady();
+    }
+}
+
+void MainWindow::on_save_1_clicked() {
+    if(tur1.checkTable(ui->tableWidget_1)) {
+      tur1.saveCommands(ui->tableWidget_1);
+    } else {
+        QMessageBox::warning(0, "Предупреждение", "Заполните все ячейки!");
+    }
+
+}
+
+void MainWindow::on_step_1_clicked() {
+    if(tur1.isReady()) {
+        if(tur1.getState() != 0) {
+            QVector <QString> lines = {ui->edit_1->toPlainText()};
+            lines = tur1.step(lines);
+            ui->edit_1->clear();
+            ui->edit_1->setText(lines[0]);
+        } else {
+            QMessageBox::information(0, "Успех", "МТ закночила выполнять ваш алгоритм");
+            tur1.reset();
+        }
+
+    } else {
+       QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
+    }
+
+}
+
+void MainWindow::on_start_1_clicked() {
+    if(tur1.isReady()) {
+
+    } else {
+       QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
+    }
 }

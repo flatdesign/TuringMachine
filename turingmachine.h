@@ -9,19 +9,20 @@ class TuringMachine{
 private:
     bool ready;
     int state;
-    int position;
+    QVector<int> positions;
     int countTapes;
     QMap<int, State*> states;
 public:
     TuringMachine(int countTapes);
     int getState();
-    int getPosition();
-    int getCountTapes();
     void addCommand(int numberState, QTableWidget *table,  int row);
     bool saveCommands(QTableWidget *table);
     bool isReady();
+    void setNotReady();
     bool checkTable(QTableWidget *table);
+    void reset();
     QVector<QString> step(QVector<QString> lines);
+    QVector<QString> changePosition(QVector<QString> lines, Command *command);
 };
 
 #endif // TURINGMACHINE_H
