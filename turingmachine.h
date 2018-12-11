@@ -1,28 +1,36 @@
 #ifndef TURINGMACHINE_H
 #define TURINGMACHINE_H
+
 #include "state.h"
 #include "QTableWidget"
 #include "QTextEdit"
+#include "QObject"
+#include "QMessageBox"
 
 
-class TuringMachine{
+class TuringMachine : public QObject {
+    Q_OBJECT
 private:
     bool ready;
     int state;
     QVector<int> positions;
-    int countTapes;
+    QVector<QTextEdit*> tapes;
     QMap<int, State*> states;
 public:
-    TuringMachine(int countTapes);
+    explicit TuringMachine(QObject *parent = 0);
     int getState();
-    void addCommand(int numberState, QTableWidget *table,  int row);
-    bool saveCommands(QTableWidget *table);
     bool isReady();
+    void addCommand(int numberState, QTableWidget *table,  int row);
+    void saveCommands(QTableWidget *table);
     void setNotReady();
-    bool checkTable(QTableWidget *table);
     void reset();
-    QVector<QString> step(QVector<QString> lines);
-    QVector<QString> changePosition(QVector<QString> lines, Command *command);
+    void addTapes(QVector<QTextEdit*> tapes);
+public slots:
+     bool step();
+     void start();
+signals:
+     void end();
+     void writeLine(QString line, QTextEdit *edit);
 };
 
 #endif // TURINGMACHINE_H
