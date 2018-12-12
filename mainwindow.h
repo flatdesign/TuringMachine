@@ -6,6 +6,14 @@
 #include "turingmachine.h"
 #include "QThread"
 
+
+#include "QFileDialog"      // Работа с файлами
+#include "QFile"
+#include <QStringList>
+#include <QTextCodec>
+#include <QTextStream>
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -18,7 +26,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     bool checkTable(QTableWidget *table);
-
+    void saveFile(QTableWidget *table);
+    void openFile(QTableWidget *table);
 
 private slots:
     void on_addState_1_clicked();
@@ -42,6 +51,14 @@ private slots:
     void on_start_2_clicked();
 
     void writeLine(QString line, QTextEdit *edit);
+
+    void on_single_open_triggered();
+
+    void on_single_save_triggered();
+
+    void on_multi_open_triggered();
+
+    void on_multi_save_triggered();
 
 private:
     Ui::MainWindow *ui;

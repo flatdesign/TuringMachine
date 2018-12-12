@@ -19,7 +19,7 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 
-bool MainWindow::checkTable(QTableWidget *table) {
+bool MainWindow::checkTable(QTableWidget *table) {   // Проверка таблицы на пустые ячейки
     for(int i = 0; i < table->rowCount(); i++) {
         for (int j = 0; j < table->columnCount(); j++) {
             if(table->item(i, j) == 0) {
@@ -35,24 +35,69 @@ bool MainWindow::checkTable(QTableWidget *table) {
     return true;
 }
 
-void MainWindow::writeLine(QString line, QTextEdit *edit) {
+void MainWindow::saveFile(QTableWidget *table) {
+    if(this->checkTable(table)) {
+        QFile file;
+        QString fileName = QFileDialog::getOpenFileName(this, "Сохранение таблицы", "D://");
+        file.setFileName(fileName);
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream out(&file);
+            out.setCodec("UTF-8");
+            for(int i = 0; i < table->rowCount(); i++) {
+                for(int j = 0; j < table->columnCount(); j++) {
+                    out << table->item(i, j)->text() + "\r\n";
+                }
+            }
+            file.close();
+        } else {
+            QMessageBox::warning(0, "Предупреждение", "Файл не удалось сохранить");
+        }
+    } else {
+       QMessageBox::warning(0, "Предупреждение", "Заполните все ячейки!");
+    }
+}
+
+void MainWindow::openFile(QTableWidget *table) {
+    QFile file;
+    QString fileName = QFileDialog::getOpenFileName(this, "Сохранение таблицы", "D://");
+    file.setFileName(fileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        table->setRowCount(0);
+        int row = 0;
+        while(!file.atEnd()) {
+            table->insertRow(table->rowCount());
+            for(int i = 0; i < 5; i++) {
+                QString str = QString::fromUtf8(file.readLine());
+                table->setItem(row, i, new QTableWidgetItem(str.left(str.length() - 2)));
+            }
+            row++;
+        }
+        file.close();
+    } else {
+        QMessageBox::warning(0, "Предупреждение", "Файл не удалось открыть");
+    }
+}
+
+
+
+void MainWindow::writeLine(QString line, QTextEdit *edit) {     // Замена строки после шага МТ
     edit->clear();
     edit->setText(line);
 }
 
-void MainWindow::on_addState_1_clicked() {
+void MainWindow::on_addState_1_clicked() {                      // Добавление строки
     ui->tableWidget_1->insertRow(ui->tableWidget_1->rowCount());
     tur1.setNotReady();
 }
 
-void MainWindow::on_deleteState_1_clicked() {
+void MainWindow::on_deleteState_1_clicked() {                   // Удаление строки
     if(ui->tableWidget_1->rowCount() > 1) {
         ui->tableWidget_1->removeRow(ui->tableWidget_1->rowCount() - 1);
         tur1.setNotReady();
     }
 }
 
-void MainWindow::on_save_1_clicked() {
+void MainWindow::on_save_1_clicked() {                  // Занесение команд в МТ
     if(this->checkTable(ui->tableWidget_1)) {
       tur1.saveCommands(ui->tableWidget_1);
     } else {
@@ -61,7 +106,7 @@ void MainWindow::on_save_1_clicked() {
 
 }
 
-void MainWindow::on_step_1_clicked() {
+void MainWindow::on_step_1_clicked() {                 // Шаг МТ
     if(tur1.isReady()) {
         if(!tur1.step()) {
             QMessageBox::information(0, "Операция выполнена", "МТ закночила выполнять ваш алгоритм");
@@ -73,7 +118,7 @@ void MainWindow::on_step_1_clicked() {
 
 }
 
-void MainWindow::on_start_1_clicked() {
+void MainWindow::on_start_1_clicked() {              // Запуск МТ
     if(tur1.isReady()) {
         connect(&thread1, &QThread::started, &tur1, &TuringMachine::start);
         connect(&tur1, &TuringMachine::end, &thread1, &QThread::terminate);
@@ -128,5 +173,18 @@ void MainWindow::on_start_2_clicked() {
     }
 }
 
+void MainWindow::on_single_save_triggered() {
+    this->saveFile(ui->tableWidget_1);
+}
 
+void MainWindow::on_single_open_triggered() {
+    this->openFile(ui->tableWidget_1);
+}
 
+void MainWindow::on_multi_open_triggered() {
+    this->openFile(ui->tableWidget_2);
+}
+
+void MainWindow::on_multi_save_triggered() {
+    this->saveFile(ui->tableWidget_2);
+}

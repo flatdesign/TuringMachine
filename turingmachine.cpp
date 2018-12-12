@@ -44,6 +44,7 @@ void TuringMachine::addCommand(int numberState, QTableWidget *table, int row){
 }
 
 void TuringMachine::saveCommands(QTableWidget *table){
+    this->states.clear();
     for(int i = 0; i < table->rowCount(); i++) {
         int numberState = table->item(i, 0)->text().toInt();
         if(!this->states.contains(numberState)) {
@@ -117,6 +118,7 @@ void TuringMachine::start() {
       key = this->step();
       Sleep(150);
     } while (key);
+    this->reset();
     emit this->end();
 }
 
