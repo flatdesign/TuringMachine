@@ -109,6 +109,10 @@ bool TuringMachine::step() {
     if(this->state == 0) {
         return false;
     }
+
+    qDebug() << "1я строка - " + QString::number(this->positions[0]);
+    qDebug() << "2я строка - " + QString::number(this->positions[1]);
+    qDebug() << "состояние - " + QString::number(this->state);
     return true;
 }
 
@@ -116,7 +120,7 @@ void TuringMachine::start() {
     bool key;
     do {
       key = this->step();
-      Sleep(150);
+      Sleep(100);
     } while (key);
     this->reset();
     emit this->end();
