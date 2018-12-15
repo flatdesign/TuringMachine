@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets  printsupport
 
 TARGET = TuringMachine
 TEMPLATE = app
@@ -27,13 +27,17 @@ SOURCES += \
         mainwindow.cpp \
     command.cpp \
     state.cpp \
-    turingmachine.cpp
+    turingmachine.cpp \
+    qcustomplot.cpp \
+    plot.cpp
 
 HEADERS += \
         mainwindow.h \
     command.h \
     state.h \
-    turingmachine.h
+    turingmachine.h \
+    qcustomplot.h \
+    plot.h
 
 FORMS += \
         mainwindow.ui

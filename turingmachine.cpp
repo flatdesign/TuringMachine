@@ -6,6 +6,7 @@
 TuringMachine::TuringMachine(QObject *parent) : QObject(parent){
     this->state = 1;
     this->ready = false;
+    this->steps = 0;
 }
 
 int TuringMachine::getState() {
@@ -21,11 +22,10 @@ void TuringMachine::setNotReady() {
 }
 
 void TuringMachine::reset() {
-    for(int i; i < this->tapes.size(); i++) {
+    for(int i = 0; i < this->tapes.size(); i++) {
         this->positions[i] = 0;
     }
     this->state = 1;
-    this->ready = false;
 }
 
 void TuringMachine::addTapes(QVector<QTextEdit *> tapes) {
@@ -33,6 +33,14 @@ void TuringMachine::addTapes(QVector<QTextEdit *> tapes) {
     for(int i = 0; i < tapes.size(); i++) {
         this->positions.push_back(0);
     }
+}
+
+void TuringMachine::refreshSteps() {
+   this->steps = 0;
+}
+
+int TuringMachine::getSteps() {
+    return this->steps;
 }
 
 void TuringMachine::addCommand(int numberState, QTableWidget *table, int row){
@@ -70,6 +78,12 @@ bool TuringMachine::step() {
     }
 
     Command *command = this->states[this->state]->getCommand(value);
+    if(command == nullptr) {
+        emit this->commandNotFound();
+        this->reset();
+        return false;
+    }
+
 
     value = command->getWrite();                    // Получили команду
 
@@ -105,14 +119,14 @@ bool TuringMachine::step() {
         emit this->writeLine(lines[i], edit);
     }
 
+    this->steps++;
+
     this->state = command->getNextState().toInt();
     if(this->state == 0) {
+        emit this->complete();
         return false;
     }
 
-    qDebug() << "1я строка - " + QString::number(this->positions[0]);
-    qDebug() << "2я строка - " + QString::number(this->positions[1]);
-    qDebug() << "состояние - " + QString::number(this->state);
     return true;
 }
 
@@ -122,7 +136,7 @@ void TuringMachine::start() {
       key = this->step();
       Sleep(100);
     } while (key);
-    this->reset();
+    this->reset();  
     emit this->end();
 }
 

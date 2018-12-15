@@ -5,6 +5,7 @@
 #include "QTableWidget"
 #include "turingmachine.h"
 #include "QThread"
+#include "plot.h"
 
 
 #include "QFileDialog"      // Работа с файлами
@@ -29,6 +30,7 @@ public:
     void saveFile(QTableWidget *table);
     void openFile(QTableWidget *table);
 
+
 private slots:
     void on_addState_1_clicked();
 
@@ -50,8 +52,6 @@ private slots:
 
     void on_start_2_clicked();
 
-    void writeLine(QString line, QTextEdit *edit);
-
     void on_single_open_triggered();
 
     void on_single_save_triggered();
@@ -60,12 +60,21 @@ private slots:
 
     void on_multi_save_triggered();
 
+    void writeLine(QString line, QTextEdit *edit);
+
+    void printEnd();
+
+    void printNotFound();
+
+
 private:
     Ui::MainWindow *ui;
     TuringMachine tur1;
     TuringMachine tur2;
     QThread thread1;
     QThread thread2;
+    Plot *plot;
+    Plot *plot_2;
 };
 
 #endif // MAINWINDOW_H

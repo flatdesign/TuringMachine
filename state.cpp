@@ -9,5 +9,8 @@ void State::addCommand(QString read, QString write, QString direction, QString n
 }
 
 Command *State::getCommand(QString command) {
-  return this->commands[command];
+    if(this->commands.contains(command))
+        return this->commands[command];
+    else
+        return nullptr;
 }

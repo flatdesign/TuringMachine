@@ -11,8 +11,29 @@ MainWindow::MainWindow(QWidget *parent) :
         QVector<QTextEdit*> tapes2 = {ui->edit_2, ui->edit_3};
         tur1.addTapes(tapes1);
         tur2.addTapes(tapes2);
+
+        // Потоки
+        connect(&thread1, SIGNAL(started()), &tur1, SLOT(start()));
+        connect(&tur1, SIGNAL(end()), &thread1, SLOT(terminate()));
+        connect(&thread2, SIGNAL(started()), &tur2, SLOT(start()));
+        connect(&tur2, SIGNAL(end()), &thread2, SLOT(terminate()));
+
+        // Замена строк в edit
         connect(&tur1, SIGNAL(writeLine(QString,QTextEdit*)), this, SLOT(writeLine(QString,QTextEdit*)));
         connect(&tur2, SIGNAL(writeLine(QString,QTextEdit*)), this, SLOT(writeLine(QString,QTextEdit*)));
+
+        // Алгоритм завершен
+        connect(&tur1, SIGNAL(complete()), this, SLOT(printEnd()));
+        connect(&tur2, SIGNAL(complete()), this, SLOT(printEnd()));
+
+        // Команда не найдена
+        connect(&tur1, SIGNAL(commandNotFound()), this, SLOT(printNotFound()));
+        connect(&tur2, SIGNAL(commandNotFound()), this, SLOT(printNotFound()));
+
+        // Графики
+        this->plot = new Plot(ui->plot);
+        this->plot_2 = new Plot(ui->plot_2);
+
     }
 
 MainWindow::~MainWindow(){
@@ -59,7 +80,7 @@ void MainWindow::saveFile(QTableWidget *table) {
 
 void MainWindow::openFile(QTableWidget *table) {
     QFile file;
-    QString fileName = QFileDialog::getOpenFileName(this, "Сохранение таблицы", "D://");
+    QString fileName = QFileDialog::getOpenFileName(this, "Открытие таблицы", "D://");
     file.setFileName(fileName);
     if (file.open(QIODevice::ReadOnly)) {
         table->setRowCount(0);
@@ -80,9 +101,24 @@ void MainWindow::openFile(QTableWidget *table) {
 
 
 
+
+
 void MainWindow::writeLine(QString line, QTextEdit *edit) {     // Замена строки после шага МТ
     edit->clear();
     edit->setText(line);
+}
+
+void MainWindow::printEnd() {
+    QMessageBox::information(0, "Операция выполнена", "МТ закночила выполнять ваш алгоритм");
+    this->plot->addPoint(20, this->tur1.getSteps());
+    this->plot->addPoint(30, this->tur1.getSteps());
+    this->plot->paint();
+    qDebug() << QString::number(this->tur1.getSteps());
+    this->tur1.refreshSteps();
+}
+
+void MainWindow::printNotFound() {
+    QMessageBox::warning(0, "Ошибка", "Данная команда не найдена");
 }
 
 void MainWindow::on_addState_1_clicked() {                      // Добавление строки
@@ -106,12 +142,10 @@ void MainWindow::on_save_1_clicked() {                  // Занесение к
 
 }
 
-void MainWindow::on_step_1_clicked() {                 // Шаг МТ
+void MainWindow::on_step_1_clicked() {               // Шаг МТ
     if(tur1.isReady()) {
-        if(!tur1.step()) {
-            QMessageBox::information(0, "Операция выполнена", "МТ закночила выполнять ваш алгоритм");
+        if(!tur1.step())
             tur1.reset();
-        }
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
@@ -120,8 +154,6 @@ void MainWindow::on_step_1_clicked() {                 // Шаг МТ
 
 void MainWindow::on_start_1_clicked() {              // Запуск МТ
     if(tur1.isReady()) {
-        connect(&thread1, &QThread::started, &tur1, &TuringMachine::start);
-        connect(&tur1, &TuringMachine::end, &thread1, &QThread::terminate);
         tur1.moveToThread(&thread1);
         thread1.start();
     } else {
@@ -152,10 +184,8 @@ void MainWindow::on_save_2_clicked() {
 
 void MainWindow::on_step_2_clicked() {
     if(tur2.isReady()) {
-        if(!tur2.step()) {
-            QMessageBox::information(0, "Операция выполнена", "МТ закночила выполнять ваш алгоритм");
+        if(!tur2.step())
             tur2.reset();
-        }
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
@@ -164,8 +194,6 @@ void MainWindow::on_step_2_clicked() {
 
 void MainWindow::on_start_2_clicked() {
     if(tur2.isReady()) {
-        connect(&thread2, &QThread::started, &tur2, &TuringMachine::start);
-        connect(&tur2, &TuringMachine::end, &thread2, &QThread::terminate);
         tur2.moveToThread(&thread2);
         thread2.start();
     } else {
