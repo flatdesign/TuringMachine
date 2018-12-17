@@ -67,6 +67,8 @@ private slots:
     void printNotFound();
 
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     TuringMachine tur1;

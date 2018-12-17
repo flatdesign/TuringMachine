@@ -43,6 +43,32 @@ int TuringMachine::getSteps() {
     return this->steps;
 }
 
+QVector<QString> TuringMachine::combinations(int size) {
+    QVector<QString> words;
+    int wordCount = qPow(3, size);
+    QString word(size, 'a');
+
+    words.push_back(word);
+    for(int i = 0; i < wordCount; i++) {
+        for(int j = size - 1; j >= 0; j--) {
+            if(word[j] == 'a') {
+                word[j] = 'b';
+                words.push_back(word);
+                break;
+            } else if (word[j] == 'b') {
+                word[j] = 'c';
+                words.push_back(word);
+                break;
+            } else if (word[j] == 'c') {
+                word[j] = 'a';
+            }
+
+        }
+
+    }
+    return words;
+}
+
 void TuringMachine::addCommand(int numberState, QTableWidget *table, int row){
     QString read = table->item(row, 1)->text();
     QString write = table->item(row, 2)->text();

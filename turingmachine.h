@@ -6,6 +6,7 @@
 #include "QTextEdit"
 #include "QObject"
 #include "QMessageBox"
+#include "qmath.h"
 
 
 class TuringMachine : public QObject {
@@ -31,6 +32,7 @@ public:
     void refreshLength();
     int getSteps();
     int getLength();
+    QVector<QString> combinations(int size);
 public slots:
      bool step();
      void start();

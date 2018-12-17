@@ -216,3 +216,11 @@ void MainWindow::on_multi_open_triggered() {
 void MainWindow::on_multi_save_triggered() {
     this->saveFile(ui->tableWidget_2);
 }
+
+void MainWindow::on_pushButton_clicked() {
+    QVector<QString> words;
+    words = tur1.combinations(3);
+    for(int i = 0; i < words.size(); i++) {
+        qDebug() << words[i];
+    }
+}
