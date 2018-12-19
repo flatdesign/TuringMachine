@@ -13,12 +13,20 @@ int TuringMachine::getState() {
     return this->state;
 }
 
-bool TuringMachine::isReady() {
-    return this->ready;
+int TuringMachine::getSteps() {
+    return this->steps;
 }
 
 void TuringMachine::setNotReady() {
   this->ready = false;
+}
+
+void TuringMachine::setSleep(int time) {
+    this->sleep = time;
+}
+
+bool TuringMachine::isReady() {
+    return this->ready;
 }
 
 void TuringMachine::reset() {
@@ -26,47 +34,19 @@ void TuringMachine::reset() {
         this->positions[i] = 0;
     }
     this->state = 1;
+    this->steps = 0;
 }
 
 void TuringMachine::addTapes(QVector<QTextEdit *> tapes) {
    this->tapes = tapes;
     for(int i = 0; i < tapes.size(); i++) {
         this->positions.push_back(0);
+        this->lines.push_back("");
     }
 }
 
 void TuringMachine::refreshSteps() {
    this->steps = 0;
-}
-
-int TuringMachine::getSteps() {
-    return this->steps;
-}
-
-QVector<QString> TuringMachine::combinations(int size) {
-    QVector<QString> words;
-    int wordCount = qPow(3, size);
-    QString word(size, 'a');
-
-    words.push_back(word);
-    for(int i = 0; i < wordCount; i++) {
-        for(int j = size - 1; j >= 0; j--) {
-            if(word[j] == 'a') {
-                word[j] = 'b';
-                words.push_back(word);
-                break;
-            } else if (word[j] == 'b') {
-                word[j] = 'c';
-                words.push_back(word);
-                break;
-            } else if (word[j] == 'c') {
-                word[j] = 'a';
-            }
-
-        }
-
-    }
-    return words;
 }
 
 void TuringMachine::addCommand(int numberState, QTableWidget *table, int row){
@@ -90,10 +70,10 @@ void TuringMachine::saveCommands(QTableWidget *table){
 }
 
 bool TuringMachine::step() {
-    QVector<QString> lines;
-    lines.resize(this->tapes.size());
-    for(int i = 0; i < this->tapes.size(); i++) {       // Считали массив строк
-        lines[i] = this->tapes[i]->toPlainText();
+    if(this->steps == 0) {
+        for(int i = 0; i < this->tapes.size(); i++) {       // Первая запись строк
+            lines[i] = this->tapes[i]->toPlainText();
+        }
     }
 
     QString value;
@@ -160,11 +140,36 @@ void TuringMachine::start() {
     bool key;
     do {
       key = this->step();
-      Sleep(100);
+      Sleep(this->sleep);
     } while (key);
     this->reset();  
     emit this->end();
 }
 
+QVector<QString> TuringMachine::combinations(int size) {
+    QVector<QString> words;
+    int wordCount = qPow(3, size);
+    QString word(size, 'a');
+
+    words.push_back(word);
+    for(int i = 0; i < wordCount; i++) {
+        for(int j = size - 1; j >= 0; j--) {
+            if(word[j] == 'a') {
+                word[j] = 'b';
+                words.push_back(word);
+                break;
+            } else if (word[j] == 'b') {
+                word[j] = 'c';
+                words.push_back(word);
+                break;
+            } else if (word[j] == 'c') {
+                word[j] = 'a';
+            }
+
+        }
+
+    }
+    return words;
+}
 
 

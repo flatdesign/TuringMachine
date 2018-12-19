@@ -16,9 +16,11 @@ private:
     int state;
     QVector<int> positions;
     QVector<QTextEdit*> tapes;
+    QVector<QString> lines;
     QMap<int, State*> states;
     int steps;
     int length;
+    int sleep;
 public:
     explicit TuringMachine(QObject *parent = 0);
     int getState();
@@ -33,6 +35,7 @@ public:
     int getSteps();
     int getLength();
     QVector<QString> combinations(int size);
+    void setSleep(int time);
 public slots:
      bool step();
      void start();

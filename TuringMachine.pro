@@ -29,7 +29,8 @@ SOURCES += \
     state.cpp \
     turingmachine.cpp \
     qcustomplot.cpp \
-    plot.cpp
+    plot.cpp \
+    demomachine.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -37,7 +38,8 @@ HEADERS += \
     state.h \
     turingmachine.h \
     qcustomplot.h \
-    plot.h
+    plot.h \
+    demomachine.h
 
 FORMS += \
         mainwindow.ui

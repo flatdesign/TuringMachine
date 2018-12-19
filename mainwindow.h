@@ -62,7 +62,7 @@ private slots:
 
     void writeLine(QString line, QTextEdit *edit);
 
-    void printEnd();
+    void end();
 
     void printNotFound();
 
