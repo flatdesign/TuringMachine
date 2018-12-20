@@ -6,6 +6,7 @@
 #include "turingmachine.h"
 #include "QThread"
 #include "plot.h"
+#include "demomachine.h"
 
 
 #include "QFileDialog"      // Работа с файлами
@@ -13,6 +14,7 @@
 #include <QStringList>
 #include <QTextCodec>
 #include <QTextStream>
+#include "qprogressbar.h"
 
 
 namespace Ui {
@@ -66,15 +68,24 @@ private slots:
 
     void printNotFound();
 
+    void on_demoStart_clicked();
 
-    void on_pushButton_clicked();
+    void addToPlot(double x, double y, Plot *plot);
+
+    void on_demoStart_2_clicked();
+
+    void upProgress(int progress, QProgressBar *bar);
 
 private:
     Ui::MainWindow *ui;
     TuringMachine tur1;
     TuringMachine tur2;
+    DemoMachine *demo1 = new DemoMachine(1);
+    DemoMachine *demo2 = new DemoMachine(2);
     QThread thread1;
     QThread thread2;
+    QThread thread3;
+    QThread thread4;
     Plot *plot;
     Plot *plot_2;
 };

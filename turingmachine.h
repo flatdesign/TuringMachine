@@ -11,7 +11,7 @@
 
 class TuringMachine : public QObject {
     Q_OBJECT
-private:
+protected:
     bool ready;
     int state;
     QVector<int> positions;

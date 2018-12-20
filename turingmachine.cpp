@@ -30,8 +30,9 @@ bool TuringMachine::isReady() {
 }
 
 void TuringMachine::reset() {
-    for(int i = 0; i < this->tapes.size(); i++) {
+    for(int i = 0; i < this->lines.size(); i++) {
         this->positions[i] = 0;
+        this->lines[i] = "_";
     }
     this->state = 1;
     this->steps = 0;
@@ -41,7 +42,7 @@ void TuringMachine::addTapes(QVector<QTextEdit *> tapes) {
    this->tapes = tapes;
     for(int i = 0; i < tapes.size(); i++) {
         this->positions.push_back(0);
-        this->lines.push_back("");
+        this->lines.push_back("_");
     }
 }
 
@@ -77,10 +78,10 @@ bool TuringMachine::step() {
     }
 
     QString value;
-    for(int i = 0; i < lines.size(); i++) {         // Считали команду
-        if(lines[i][this->positions[i]] == '\x0')
-           lines[i][this->positions[i]] = '_';
-        value += lines[i][this->positions[i]];
+    for(int i = 0; i < this->lines.size(); i++) {         // Считали команду
+        if(this->lines[i][this->positions[i]] == '\x0')
+           this->lines[i][this->positions[i]] = '_';
+        value += this->lines[i][this->positions[i]];
     }
 
     Command *command = this->states[this->state]->getCommand(value);
@@ -93,16 +94,16 @@ bool TuringMachine::step() {
 
     value = command->getWrite();                    // Получили команду
 
-    for(int i = 0; i < lines.size(); i++) {         // Записали нужные сиволы в строки
-        lines[i][this->positions[i]] = value[i];
+    for(int i = 0; i < this->lines.size(); i++) {         // Записали нужные сиволы в строки
+        this->lines[i][this->positions[i]] = value[i];
     }
 
     QString key = command->getDirection();      // Меням позицию
-    for(int i = 0; i < lines.size(); i++) {
+    for(int i = 0; i < this->lines.size(); i++) {
         switch(key[i].unicode()) {
             case 60: {
                 if(this->positions[i] == 0) {
-                   lines[i].insert(0, '_');
+                   this->lines[i].insert(0, '_');
                 } else {
                     this->positions[i]--;
                 }
@@ -110,7 +111,7 @@ bool TuringMachine::step() {
             }
             case 62: {
                 if(++this->positions[i] == lines[i].length())
-                   lines[i].push_back('_');
+                   this->lines[i].push_back('_');
                 break;
             }
             default: {
@@ -122,7 +123,7 @@ bool TuringMachine::step() {
 
     for(int i = 0; i < this->tapes.size(); i++) {     // Записываем строки в edit
         QTextEdit *edit = this->tapes[i];
-        emit this->writeLine(lines[i], edit);
+        emit this->writeLine(this->lines[i], edit);
     }
 
     this->steps++;
@@ -144,32 +145,6 @@ void TuringMachine::start() {
     } while (key);
     this->reset();  
     emit this->end();
-}
-
-QVector<QString> TuringMachine::combinations(int size) {
-    QVector<QString> words;
-    int wordCount = qPow(3, size);
-    QString word(size, 'a');
-
-    words.push_back(word);
-    for(int i = 0; i < wordCount; i++) {
-        for(int j = size - 1; j >= 0; j--) {
-            if(word[j] == 'a') {
-                word[j] = 'b';
-                words.push_back(word);
-                break;
-            } else if (word[j] == 'b') {
-                word[j] = 'c';
-                words.push_back(word);
-                break;
-            } else if (word[j] == 'c') {
-                word[j] = 'a';
-            }
-
-        }
-
-    }
-    return words;
 }
 
 
