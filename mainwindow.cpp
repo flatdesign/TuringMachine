@@ -162,7 +162,6 @@ void MainWindow::addToPlot(double x, double y, Plot *plot) {
 }
 
 void MainWindow::upProgress(int progress, QProgressBar* bar) {
-    qDebug() << QString::number(progress);
     if(bar->value() != progress) {
        bar->setValue(progress);
     }

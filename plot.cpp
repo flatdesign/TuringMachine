@@ -4,7 +4,7 @@ Plot::Plot(QCustomPlot *plot) {
     this->plot = plot;
     this->plot->addGraph();
     this->plot->xAxis->setRange(0, 40);
-    this->plot->yAxis->setRange(0, 900);
+    this->plot->yAxis->setRange(0, 600);
     this->plot->replot();
 }
 

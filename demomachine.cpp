@@ -19,7 +19,7 @@ void DemoMachine::runAlgorithm() {
         this->start();
         stepsArray.push_back(this->steps);
         this->reset();
-        progress = (int)((i + 1)/words.size() * 100);
+        progress = ((double)i + 1)/words.size() * 100;
         emit this->upProgress(progress, this->progress);
     }
     words.clear();
