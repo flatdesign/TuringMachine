@@ -9,6 +9,7 @@
 #include "qmath.h"
 
 
+
 class TuringMachine : public QObject {
     Q_OBJECT
 protected:
@@ -36,6 +37,7 @@ public:
     int getLength();
     QVector<QString> combinations(int size);
     void setSleep(int time);
+    bool checkSymbols();
 public slots:
      bool step();
      void start();
@@ -44,6 +46,7 @@ signals:
      void writeLine(QString line, QTextEdit *edit);
      void commandNotFound();
      void complete();
+     void printLog(QString line);
 };
 
 #endif // TURINGMACHINE_H

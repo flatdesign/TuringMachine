@@ -49,6 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
         this->demo2->setProgressBar(ui->progressBar_2);
         connect(demo1, SIGNAL(upProgress(int, QProgressBar*)), this, SLOT(upProgress(int,QProgressBar*)));
         connect(demo2, SIGNAL(upProgress(int, QProgressBar*)), this, SLOT(upProgress(int,QProgressBar*)));
+
+        // Логер
+        connect(&tur1, SIGNAL(printLog(QString)), this, SLOT(printLog(QString)));
+        connect(&tur2, SIGNAL(printLog(QString)), this, SLOT(printLog(QString)));
+
     }
 
 MainWindow::~MainWindow(){
@@ -137,6 +142,23 @@ void MainWindow::on_multi_save_triggered() {
     this->saveFile(ui->tableWidget_2);
 }
 
+void MainWindow::printLog(QString line) {
+    QFile file;
+    QString fileName = QCoreApplication::applicationDirPath() + "/loger.txt";
+    qDebug() << fileName;
+    file.setFileName(fileName);
+    if (file.open(QIODevice::Append)) {
+        QTextStream out(&file);
+        out.setCodec("UTF-8");
+        out << line;
+        file.close();
+    } else {
+        QMessageBox::warning(0, "Предупреждение", "Лог не удалось сохранить");
+    }
+}
+
+
+
 
 
 // Слоты
@@ -174,6 +196,8 @@ void MainWindow::upProgress(int progress, QProgressBar* bar) {
 
 
 
+
+
 // Работа с формами
 
 void MainWindow::on_addState_1_clicked() {
@@ -202,8 +226,13 @@ void MainWindow::on_save_1_clicked() {
 
 void MainWindow::on_step_1_clicked() {
     if(tur1.isReady()) {
-        if(!tur1.step())
-            tur1.reset();
+        if(tur1.checkSymbols()) {
+            if(!tur1.step())
+                tur1.reset();
+        } else {
+           QMessageBox::warning(0, "Предупреждение", "Символы не входят в алфавит");
+        }
+
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
@@ -212,10 +241,14 @@ void MainWindow::on_step_1_clicked() {
 
 void MainWindow::on_start_1_clicked() {
     if(tur1.isReady()) {
-        tur1.moveToThread(&thread1);
-        qDebug() << QString::number(ui->speed->value());
-        tur1.setSleep(500 - ui->speed->value());
-        thread1.start();
+        if(tur1.checkSymbols()) {
+            tur1.moveToThread(&thread1);
+            qDebug() << QString::number(ui->speed->value());
+            tur1.setSleep(500 - ui->speed->value());
+            thread1.start();
+        } else {
+            QMessageBox::warning(0, "Предупреждение", "Символы не входят в алфавит");
+        }
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
@@ -248,8 +281,12 @@ void MainWindow::on_save_2_clicked() {
 
 void MainWindow::on_step_2_clicked() {
     if(tur2.isReady()) {
-        if(!tur2.step())
-            tur2.reset();
+        if(tur2.checkSymbols()) {
+            if(!tur2.step())
+                tur2.reset();
+        } else {
+            QMessageBox::warning(0, "Предупреждение", "Символы не входят в алфавит");
+        }
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
@@ -258,9 +295,13 @@ void MainWindow::on_step_2_clicked() {
 
 void MainWindow::on_start_2_clicked() {
     if(tur2.isReady()) {
-        tur2.moveToThread(&thread2);
-        tur2.setSleep(500 - ui->speed_2->value());
-        thread2.start();
+        if(tur2.checkSymbols()) {
+            tur2.moveToThread(&thread2);
+            tur2.setSleep(500 - ui->speed_2->value());
+            thread2.start();
+        } else {
+            QMessageBox::warning(0, "Предупреждение", "Символы не входят в алфавит");
+        }
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
@@ -287,5 +328,4 @@ void MainWindow::on_demoStart_2_clicked() {
         QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }
 }
-
 

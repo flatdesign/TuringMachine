@@ -25,6 +25,20 @@ void TuringMachine::setSleep(int time) {
     this->sleep = time;
 }
 
+bool TuringMachine::checkSymbols() {
+    QString line;
+    for(int i = 0; i < this->tapes.size(); i++) {
+       line = this->tapes[i]->toPlainText();
+       for(int i = 0; i < line.length(); i++) {
+           if(line[i] != 'a' && line[i] != 'b' && line[i] != 'c') {
+               return false;
+           }
+       }
+    }
+
+    return true;
+}
+
 bool TuringMachine::isReady() {
     return this->ready;
 }
@@ -75,6 +89,15 @@ bool TuringMachine::step() {
         for(int i = 0; i < this->tapes.size(); i++) {       // Первая запись строк
             lines[i] = this->tapes[i]->toPlainText();
         }
+
+        QString log, line;
+        log = "" + QString::number(this->steps) + ") ";
+        for(int i = 0; i < this->lines.size(); i++) {
+            line = this->lines[i];
+            line = line.insert(this->positions[i], "Q" + QString::number(this->state)) + "\r\n";
+            log += line;
+        }
+        emit this->printLog(log);
     }
 
     QString value;
@@ -128,7 +151,19 @@ bool TuringMachine::step() {
 
     this->steps++;
 
+
+
     this->state = command->getNextState().toInt();
+
+    QString log, line;
+    log = "" + QString::number(this->steps) + ") ";
+    for(int i = 0; i < this->lines.size(); i++) {
+        line = this->lines[i];
+        line = line.insert(this->positions[i], "Q" + QString::number(this->state)) + "\r\n";
+        log += line;
+    }
+    emit this->printLog(log);
+
     if(this->state == 0) {
         emit this->complete();
         return false;
@@ -146,5 +181,6 @@ void TuringMachine::start() {
     this->reset();  
     emit this->end();
 }
+
 
 

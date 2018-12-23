@@ -309,6 +309,9 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QCustomPlot" name="plot" native="true">
     <property name="geometry">

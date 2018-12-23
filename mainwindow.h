@@ -9,13 +9,13 @@
 #include "demomachine.h"
 
 
-#include "QFileDialog"      // Работа с файлами
+#include "QFileDialog"
 #include "QFile"
 #include <QStringList>
 #include <QTextCodec>
 #include <QTextStream>
 #include "qprogressbar.h"
-
+#include "qcoreapplication.h"
 
 namespace Ui {
 class MainWindow;
@@ -75,6 +75,9 @@ private slots:
     void on_demoStart_2_clicked();
 
     void upProgress(int progress, QProgressBar *bar);
+
+    void printLog(QString line);
+
 
 private:
     Ui::MainWindow *ui;
