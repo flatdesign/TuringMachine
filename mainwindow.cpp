@@ -177,8 +177,7 @@ void MainWindow::printNotFound() {
     QMessageBox::warning(0, "Ошибка", "Данная команда не найдена");
 }
 
-void MainWindow::addToPlot(double x, double y, Plot *plot) {
-    QMessageBox::information(0, "Операция выполнена", "МТ закночила выполнять ваш алгоритм");  
+void MainWindow::addToPlot(double x, double y, Plot *plot) { 
     plot->addPoint(x, y);
     plot->paint();
 }
@@ -226,12 +225,8 @@ void MainWindow::on_save_1_clicked() {
 
 void MainWindow::on_step_1_clicked() {
     if(tur1.isReady()) {
-        if(tur1.checkSymbols()) {
-            if(!tur1.step())
-                tur1.reset();
-        } else {
-           QMessageBox::warning(0, "Предупреждение", "Символы не входят в алфавит");
-        }
+       if(!tur1.step())
+           tur1.reset();
 
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
@@ -281,12 +276,8 @@ void MainWindow::on_save_2_clicked() {
 
 void MainWindow::on_step_2_clicked() {
     if(tur2.isReady()) {
-        if(tur2.checkSymbols()) {
-            if(!tur2.step())
-                tur2.reset();
-        } else {
-            QMessageBox::warning(0, "Предупреждение", "Символы не входят в алфавит");
-        }
+      if(!tur2.step())
+         tur2.reset();
     } else {
        QMessageBox::warning(0, "Предупреждение", "Сохраните команды Машины Тьюринга");
     }

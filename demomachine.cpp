@@ -11,26 +11,29 @@ DemoMachine::DemoMachine(int tapes) {
 }
 
 void DemoMachine::runAlgorithm() {
-    QVector<int> stepsArray;
-    QVector<QString> words = this->combinations(this->length);
-    int progress;
-    for(int i = 0; i < words.size(); i++) {
-        this->currentWord = words[i];
-        this->start();
-        stepsArray.push_back(this->steps);
-        this->reset();
-        progress = ((double)i + 1)/words.size() * 100;
-        emit this->upProgress(progress, this->progress);
-    }
-    words.clear();
+    for(int i = 0; i < this->length; i++) {
+        QVector<int> stepsArray;
+        QVector<QString> words = this->combinations(i);
+        int progress;
+        for(int i = 0; i < words.size(); i++) {
+            this->currentWord = words[i];
+            this->start();
+            stepsArray.push_back(this->steps);
+            this->reset();
+            progress = ((double)i + 1)/words.size() * 100;
+            emit this->upProgress(progress, this->progress);
+        }
+        words.clear();
 
-    double max = 0;
-    for(int i = 0; i < stepsArray.size(); i++) {
-        if(stepsArray[i] > max)
-            max = stepsArray[i];
+        double max = 0;
+        for(int i = 0; i < stepsArray.size(); i++) {
+            if(stepsArray[i] > max)
+                max = stepsArray[i];
+        }
+
+        emit this->print(i, max, this->plot);
     }
 
-    emit this->print(this->length, max, this->plot);
     emit this->stop();
 }
 
